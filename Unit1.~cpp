@@ -11,10 +11,11 @@ TForm1 *Form1;
 
 int x = -8;
 int y = -8;
-int punktyGracza1 = 0;
-int punktyGracza2 = 0;
-int iloscOdbic = 0;
-
+int pointsPlayer1 = 0;
+int pointsPlayer2 = 0;
+int counterRebound = 0;
+unsigned int speedBall = 30;
+int counterCurrentRebound = 5;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
         : TForm(Owner)
@@ -22,147 +23,168 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 }
 //---------------------------------------------------------------------------
 
-void pokazMenu()
+void showMenu()
 {
-        Form1->Label1->Visible = true;
-        Form1->Label2->Visible = true;            Form1->Label5->Caption = punktyGracza2;
-        Form1->Label3->Visible = true;
-        Form1->Label4->Visible = true;
-        Form1->Label5->Visible = true;
-        Form1->Label6->Visible = true;
-        Form1->Label7->Visible = true;
-        Form1->menu->Visible = true;
-        Form1->runda->Visible = true;
+        Form1->labelPlayer1->Visible = true;
+        Form1->labelPlayer2->Visible = true;
+        Form1->labelPointsPlayer1->Visible = true;
+        Form1->labelSeparation->Visible = true;
+        Form1->labelPointsPlayer2->Visible = true;
+        Form1->labelInformationRebound->Visible = true;
+        Form1->labelRebound->Visible = true;
+        Form1->menuButton->Visible = true;
+        Form1->roundButton->Visible = true;
 
-        Form1->Label5->Caption = punktyGracza2;
-        Form1->Label3->Caption = punktyGracza1;
-        Form1->Label7->Caption = iloscOdbic;
+        Form1->labelPointsPlayer2->Caption = pointsPlayer2;
+        Form1->labelPointsPlayer1->Caption = pointsPlayer1;
+        Form1->labelRebound->Caption = counterRebound;
 }
 
-void __fastcall TForm1::Timer_pilkaTimer(TObject *Sender)
+void hideMenu()
 {
-        pilka->Left += x;
-        pilka->Top  += y;
+        Form1->labelPlayer1->Visible = false;
+        Form1->labelPlayer2->Visible = false;
+        Form1->labelPointsPlayer1->Visible = false;
+        Form1->labelSeparation->Visible = false;
+        Form1->labelPointsPlayer2->Visible = false;
+        Form1->labelInformationRebound->Visible = false;
+        Form1->labelRebound->Visible = false;
+        Form1->menuButton->Visible = false;
+        Form1->roundButton->Visible = false;
+}
 
-        // odbij od gornej krawendzi
-        if (pilka->Top - 5 <= tlo->Top)
+void changeSpeedBall()
+{
+        if ( counterRebound  == counterCurrentRebound)
+        {
+                counterCurrentRebound += 5;
+                speedBall = speedBall - 5;
+                Form1->TimerBall->Interval = speedBall;
+
+        }
+}
+
+void __fastcall TForm1::TimerBallTimer(TObject *Sender)
+{
+        ball->Left += x;
+        ball->Top  += y;
+
+        // Bound from the top edge
+        if (ball->Top - 5 <= background->Top)
         {
                y = -y;
         }
-        // odbij od dolnej krawendzi
-        if (pilka->Top + pilka->Height >= tlo->Height)
+        // Bound from the bottom edge
+        if (ball->Top + ball->Height >= background->Height)
         {
                y = -y;
         }
 
-        // skucha
-        if (pilka->Left <= tlo->Left)
+        // Game over
+        if (ball->Left <= background->Left || ball->Left + ball->Width < player1->Left)
         {
-                Timer_pilka->Enabled = false;
-                pilka->Visible = false;
-                punktyGracza2++;
-                pokazMenu();
+                TimerBall->Enabled = false;
+                ball->Visible = false;
+                pointsPlayer2++;
+                showMenu();
 
 
         }
 
-        if (pilka->Left >= tlo->Left + tlo->Width + 10)
+        if (ball->Left >= background->Left + background->Width + 10)
         {
-                Timer_pilka->Enabled = false;
-                punktyGracza1++;
-                pilka->Visible = false;
-                pokazMenu();
+                TimerBall->Enabled = false;
+                pointsPlayer1++;
+                ball->Visible = false;
+                showMenu();
         }
 
         
-        else if (pilka->Left < p1->Left  && p1->Top < pilka->Top + pilka->Height && p1->Top + p1->Height > pilka->Top)
+        else if (ball->Left < player1->Left + player1->Width - ball->Width / 2 && ball->Top + ball->Height / 2 <= player1->Top + player1->Height && player1->Top <= ball->Top + ball->Height / 2)
         {
-                if ( x < 0)
+                if (x < 0)
                 {
-                x = -x;
-                iloscOdbic++;
+                        x = -x;
+                        counterRebound++;
+                        changeSpeedBall();
                 }
 
         }
-        else if (pilka->Left > p2->Left - 10 && p2->Top < pilka->Top + pilka->Height && p2->Top + p2->Height > pilka->Top)
+        else if (ball->Left > player2->Left - ball->Width && ball->Top + ball->Height / 2 <= player2->Top + player2->Height && player2->Top <= ball->Top + ball->Height / 2)
         {
                 if ( x > 0)
                 {
-                x = -x;
-                iloscOdbic++;
+                        x = -x;
+                        counterRebound++;
+                        changeSpeedBall();
                 }
         }
+
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::gora_p1Timer(TObject *Sender)
+void __fastcall TForm1::upPlayer1Timer(TObject *Sender)
 {
-        if(p1->Top >= tlo->Top + 5)
-        p1->Top -= 10;
+        if(player1->Top >= background->Top + 5)
+        player1->Top -= 10;
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::dol_p1Timer(TObject *Sender)
+void __fastcall TForm1::downPlayer1Timer(TObject *Sender)
 {
-       if(p1->Top <= tlo->Height - p1->Height - 2)
-       p1->Top += 10;
+       if(player1->Top <= background->Height - player1->Height - 2)
+       player1->Top += 10;
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
-       if (Key == 0x57) gora_p1->Enabled = true;
-       if (Key == 0x53) dol_p1->Enabled = true;
-       if (Key == VK_UP) gora_p2->Enabled = true;
-       if (Key == VK_DOWN) dol_p2->Enabled = true;
+       if (Key == 0x57) upPlayer1->Enabled = true;
+       if (Key == 0x53) downPlayer1->Enabled = true;
+       if (Key == VK_UP) upPlayer2->Enabled = true;
+       if (Key == VK_DOWN) downPlayer2->Enabled = true;
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
-        if (Key == 0x57) gora_p1->Enabled = false;
-        if (Key == 0x53) dol_p1->Enabled = false;
-        if (Key == VK_UP) gora_p2->Enabled = false;
-        if (Key == VK_DOWN) dol_p2->Enabled = false;
+        if (Key == 0x57) upPlayer1->Enabled = false;
+        if (Key == 0x53) downPlayer1->Enabled = false;
+        if (Key == VK_UP) upPlayer2->Enabled = false;
+        if (Key == VK_DOWN) downPlayer2->Enabled = false;
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::gora_p2Timer(TObject *Sender)
+void __fastcall TForm1::upPlayer2Timer(TObject *Sender)
 {
-        if(p2->Top >= tlo->Top + 4)
-        p2->Top -= 10;
+        if(player2->Top >= background->Top + 4)
+        player2->Top -= 10;
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::dol_p2Timer(TObject *Sender)
+void __fastcall TForm1::downPlayer2Timer(TObject *Sender)
 {
-       if(p2->Top <= tlo->Height - p2->Height - 2)
-       p2->Top += 10;
+       if(player2->Top <= background->Height - player2->Height - 2)
+       player2->Top += 10;
 }
 //---------------------------------------------------------------------------
 
 
 
-void __fastcall TForm1::rundaClick(TObject *Sender)
+void __fastcall TForm1::roundButtonClick(TObject *Sender)
 {
-        iloscOdbic = 0;
-        pilka->Visible = true;
-        pilka->Left = 504;
-        pilka->Top = 208;
-        p1->Top = 208;
-        p2->Top = 208;
+        counterRebound = 0;
+        speedBall = 30;
+        ball->Visible = true;
+        ball->Left = 504;
+        ball->Top = 208;
+        player1->Top = 208;
+        player2->Top = 208;
 
-        Form1->Label1->Visible = false;
-        Form1->Label2->Visible = false;
-        Form1->Label3->Visible = false;
-        Form1->Label4->Visible = false;
-        Form1->Label5->Visible = false;
-        Form1->Label6->Visible = false;
-        Form1->Label7->Visible = false;
-        Form1->menu->Visible = false;
-        Form1->runda->Visible = false;
-        Timer_pilka->Enabled = true;
+        hideMenu();
 
+        TimerBall->Interval = speedBall;
+        TimerBall->Enabled = true;
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::Button2Click(TObject *Sender)
+void __fastcall TForm1::controlInstructionButtonClick(TObject *Sender)
 {
         AnsiString strMessage = "Witam w grze!\n";
         AnsiString strMessage2 = "INSTRUKCJA OBS£UGI\n";
@@ -174,24 +196,38 @@ void __fastcall TForm1::Button2Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::Button1Click(TObject *Sender)
+void __fastcall TForm1::startGameButtonClick(TObject *Sender)
 {
-        Button1->Visible = false;
-        Button2->Visible = false;
-        tytul->Visible = false;
-        iloscOdbic = 0;
-        punktyGracza1 = 0;
-        punktyGracza2 = 0;
-        Timer_pilka->Enabled = true;
+        startGameButton->Visible = false;
+        controlInstructionButton->Visible = false;
+        labelTitle->Visible = false;
+        counterRebound = 0;
+        pointsPlayer1 = 0;
+        pointsPlayer2 = 0;
+        speedBall = 30;
+        counterCurrentRebound = 5;
+        TimerBall->Enabled = true;
+        TimerBall->Interval = speedBall;
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::menuClick(TObject *Sender)
+void __fastcall TForm1::menuButtonClick(TObject *Sender)
 {
-        Button1->Visible = true;
-        Button2->Visible = true;
-        tytul->Visible = true;
-        Timer_pilka->Enabled = false;
+        startGameButton->Visible = true;
+        controlInstructionButton->Visible = true;
+        labelTitle->Visible = true;
+        ball->Visible = true;
+        ball->Left = 504;
+        ball->Top = 208;
+        player1->Top = 208;
+        player2->Top = 208;
+        speedBall = 30;
+        counterCurrentRebound = 5;
+
+        hideMenu();
+
+        TimerBall->Interval = speedBall;
+        TimerBall->Enabled = false;
 }
 //---------------------------------------------------------------------------
 

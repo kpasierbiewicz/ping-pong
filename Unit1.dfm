@@ -18,7 +18,7 @@ object Form1: TForm1
   OnKeyUp = FormKeyUp
   PixelsPerInch = 96
   TextHeight = 14
-  object tlo: TShape
+  object background: TShape
     Left = 0
     Top = 0
     Width = 1028
@@ -26,7 +26,7 @@ object Form1: TForm1
     Align = alClient
     Brush.Color = clSilver
   end
-  object pilka: TImage
+  object ball: TImage
     Left = 504
     Top = 240
     Width = 32
@@ -134,7 +134,7 @@ object Form1: TForm1
       FFFF}
     Transparent = True
   end
-  object p1: TImage
+  object player1: TImage
     Left = 40
     Top = 208
     Width = 20
@@ -333,7 +333,7 @@ object Form1: TForm1
       17291E17291E17291E17291E17291EFFFFFF}
     Transparent = True
   end
-  object p2: TImage
+  object player2: TImage
     Left = 968
     Top = 224
     Width = 20
@@ -532,7 +532,7 @@ object Form1: TForm1
       17291E17291E17291E17291E17291EFFFFFF}
     Transparent = True
   end
-  object Label1: TLabel
+  object labelPlayer1: TLabel
     Left = 208
     Top = 40
     Width = 106
@@ -546,7 +546,7 @@ object Form1: TForm1
     ParentFont = False
     Visible = False
   end
-  object Label2: TLabel
+  object labelPlayer2: TLabel
     Left = 688
     Top = 40
     Width = 106
@@ -560,11 +560,11 @@ object Form1: TForm1
     ParentFont = False
     Visible = False
   end
-  object Label3: TLabel
+  object labelPointsPlayer1: TLabel
     Left = 240
     Top = 120
-    Width = 57
-    Height = 57
+    Width = 8
+    Height = 43
     Font.Charset = EASTEUROPE_CHARSET
     Font.Color = clWindowText
     Font.Height = -37
@@ -573,7 +573,7 @@ object Form1: TForm1
     ParentFont = False
     Visible = False
   end
-  object Label4: TLabel
+  object labelSeparation: TLabel
     Left = 512
     Top = 136
     Width = 8
@@ -587,11 +587,11 @@ object Form1: TForm1
     ParentFont = False
     Visible = False
   end
-  object Label5: TLabel
+  object labelPointsPlayer2: TLabel
     Left = 720
     Top = 120
-    Width = 57
-    Height = 57
+    Width = 8
+    Height = 43
     Font.Charset = EASTEUROPE_CHARSET
     Font.Color = clWindowText
     Font.Height = -37
@@ -600,7 +600,7 @@ object Form1: TForm1
     ParentFont = False
     Visible = False
   end
-  object Label6: TLabel
+  object labelInformationRebound: TLabel
     Left = 392
     Top = 296
     Width = 151
@@ -614,10 +614,10 @@ object Form1: TForm1
     ParentFont = False
     Visible = False
   end
-  object Label7: TLabel
+  object labelRebound: TLabel
     Left = 584
     Top = 296
-    Width = 33
+    Width = 8
     Height = 43
     Font.Charset = EASTEUROPE_CHARSET
     Font.Color = clWindowText
@@ -627,7 +627,7 @@ object Form1: TForm1
     ParentFont = False
     Visible = False
   end
-  object tytul: TLabel
+  object labelTitle: TLabel
     Left = 328
     Top = 48
     Width = 364
@@ -640,7 +640,7 @@ object Form1: TForm1
     Font.Style = [fsBold]
     ParentFont = False
   end
-  object menu: TButton
+  object menuButton: TButton
     Left = 536
     Top = 392
     Width = 105
@@ -648,9 +648,9 @@ object Form1: TForm1
     Caption = 'Menu G'#322#243'wne'
     TabOrder = 0
     Visible = False
-    OnClick = menuClick
+    OnClick = menuButtonClick
   end
-  object runda: TButton
+  object roundButton: TButton
     Left = 368
     Top = 392
     Width = 113
@@ -658,9 +658,9 @@ object Form1: TForm1
     Caption = 'Kolejna runda'
     TabOrder = 1
     Visible = False
-    OnClick = rundaClick
+    OnClick = roundButtonClick
   end
-  object Button1: TButton
+  object startGameButton: TButton
     Left = 416
     Top = 280
     Width = 209
@@ -673,9 +673,9 @@ object Form1: TForm1
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 2
-    OnClick = Button1Click
+    OnClick = startGameButtonClick
   end
-  object Button2: TButton
+  object controlInstructionButton: TButton
     Left = 416
     Top = 384
     Width = 209
@@ -688,36 +688,36 @@ object Form1: TForm1
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 3
-    OnClick = Button2Click
+    OnClick = controlInstructionButtonClick
   end
-  object Timer_pilka: TTimer
+  object TimerBall: TTimer
     Enabled = False
-    Interval = 15
-    OnTimer = Timer_pilkaTimer
+    Interval = 30
+    OnTimer = TimerBallTimer
   end
-  object gora_p1: TTimer
+  object upPlayer1: TTimer
     Enabled = False
     Interval = 20
-    OnTimer = gora_p1Timer
+    OnTimer = upPlayer1Timer
     Top = 32
   end
-  object dol_p1: TTimer
+  object downPlayer1: TTimer
     Enabled = False
     Interval = 20
-    OnTimer = dol_p1Timer
+    OnTimer = downPlayer1Timer
     Left = 32
     Top = 32
   end
-  object gora_p2: TTimer
+  object upPlayer2: TTimer
     Enabled = False
     Interval = 20
-    OnTimer = gora_p2Timer
+    OnTimer = upPlayer2Timer
     Top = 64
   end
-  object dol_p2: TTimer
+  object downPlayer2: TTimer
     Enabled = False
     Interval = 20
-    OnTimer = dol_p2Timer
+    OnTimer = downPlayer2Timer
     Left = 32
     Top = 64
   end
